@@ -1,0 +1,52 @@
+@page
+@model ProtWatchdog.Pages.IndexModel
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Prot Watchdog</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <style>
+        form#addForm {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+            form#addForm label {
+                flex: 1 1 200px;
+            }
+
+            form#addForm input {
+                min-width: 200px;
+            }
+        @@media (max-width: 600px) {
+            form #addForm
+
+        {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        }</style>
+</head>
+<body>
+    <h1>Prot Watchdog - Web UI</h1>
+    <form id="addForm">
+        <label>Name: <input type="text" id="name" required></label>
+        <label>Executable path: <input type="text" id="exe" required></label>
+        <label>Parameters: <input type="text" id="params"></label>
+        <label>Restart delay (s): <input type="number" id="delay" value="5" min="1"></label>
+        <button type="submit">Add</button>
+    </form>
+
+    <h2>Managed Processes</h2>
+    <table id="table" border="1" style="width:100%">
+        <thead><tr><th>Name</th><th>Exe</th><th>Params</th><th>RestartDelay</th><th>LastStart</th><th>Restarts</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="/app.js"></script>
+</body>
+</html>
