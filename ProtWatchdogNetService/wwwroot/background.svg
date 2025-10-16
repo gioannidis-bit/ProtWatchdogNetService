@@ -1,0 +1,27 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#14243d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <g fill="none" stroke="#00A3FF" stroke-opacity="0.3">
+    <path d="M0,700 C300,600 500,800 800,700 C1100,600 1300,800 1600,700" stroke-width="3"/>
+    <path d="M0,600 C300,500 500,700 800,600 C1100,500 1300,700 1600,600" stroke-width="2"/>
+    <path d="M0,800 C300,700 500,900 800,800 C1100,700 1300,900 1600,800" stroke-width="4"/>
+  </g>
+  <g fill="none" stroke="#00FFC6" stroke-opacity="0.25">
+    <path d="M0,200 C300,300 500,100 800,200 C1100,300 1300,100 1600,200" stroke-width="2"/>
+    <path d="M0,300 C300,400 500,200 800,300 C1100,400 1300,200 1600,300" stroke-width="3"/>
+  </g>
+  <text x="50%" y="42%" dominant-baseline="middle" text-anchor="middle"
+        font-family="Segoe UI, Roboto, Arial" font-size="52" fill="#e9eef5" opacity="0.9">
+    Hospitality Integrated Technologies
+  </text>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-family="Segoe UI, Roboto, Arial" font-size="38" fill="#9ec7ff" opacity="0.9">
+    Protel Watchdog
+  </text>
+</svg>

@@ -1,0 +1,125 @@
+
+:root {
+  --brand1: #00A3FF;
+  --brand2: #00FFC6;
+  --bg-overlay: rgba(0,0,0,0.45);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: url('/background.svg') no-repeat center center fixed, linear-gradient(135deg, #0b1020, #121a2a);
+  background-size: cover;
+  color: #e9eef5;
+}
+
+h1, h2 {
+  text-align: center;
+  margin: 18px 0 10px;
+}
+
+form#addForm {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  align-items: end;
+  width: 95%;
+  margin: 0 auto;
+  background: var(--bg-overlay);
+  padding: 12px;
+  border-radius: 10px;
+  backdrop-filter: blur(2px);
+}
+
+form#addForm label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+form#addForm input, form#addForm button {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #2a3344;
+  background: #0f1726;
+  color: #d8e2f0;
+}
+
+form#addForm input:focus {
+  outline: 2px solid var(--brand1);
+  border-color: var(--brand1);
+}
+
+form#addForm button {
+  background: linear-gradient(90deg, var(--brand1), var(--brand2));
+  color: #04101a;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+form#addForm button:hover { filter: brightness(1.05); }
+
+.table-wrapper {
+  width: 95%;
+  margin: 16px auto 40px;
+  background: var(--bg-overlay);
+  border-radius: 10px;
+  overflow-x: auto;
+  padding: 6px;
+  backdrop-filter: blur(2px);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+thead th {
+  background: #0d1524;
+  color: #9ec7ff;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 10px;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+tbody td {
+  padding: 8px 10px;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) { background: rgba(255,255,255,0.07); }
+tbody tr:nth-child(odd)  { background: rgba(0,0,0,0.22); }
+
+.action-btn {
+  padding: 6px 10px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.start { background: #29d17e; color: #072011; }
+.stop  { background: #ff5a5f; color: #200707; }
+.rm    { background: #8b94a6; color: #161b24; }
+.edit  { background: #ffd166; color: #211a05; }
+.save  { background: #6ab0ff; color: #081525; }
+.cancel{ background: #caa6ff; color: #1a0a2a; }
+
+input.inline {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #2a3344;
+  background: #0f1726;
+  color: #d8e2f0;
+}
