@@ -1,243 +1,211 @@
 @page
 @model ProtWatchdog.Pages.IndexModel
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prot Watchdog</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_Layout";
+}
+
+@section Head {
     <style>
-        body {
-            max-width: 1400px;
+        .card-kpi {
+            border: 0;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        form#addForm {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+        .kpi-value {
+            font-size: clamp(1.6rem, 2.5vw, 2rem);
+            font-weight: 700;
         }
 
-            form#addForm label {
-                display: flex;
-                flex-direction: column;
-            }
-
-            form#addForm input {
-                margin-top: 5px;
-            }
-
-            form#addForm button {
-                grid-column: 1 / -1;
-            }
-
-        /* Responsive table wrapper */
-        .table-wrapper {
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
-
-            table th, table td {
-                padding: 10px;
-                text-align: left;
-                border: 1px solid #ddd;
-            }
-
-            table th {
-                background-color: #f5f5f5;
-                font-weight: bold;
-            }
-
-            table tr:hover {
-                background-color: #f9f9f9;
-            }
-
-        .status-running {
-            color: green;
-            font-weight: bold;
-        }
-
-        .status-stopped {
-            color: red;
-            font-weight: bold;
+        .kpi-label {
+            font-size: .9rem;
+            opacity: .85;
         }
 
         .mono {
-            font-family: monospace;
-            font-size: 0.9em;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
 
-        button.remove-btn {
-            background-color: #d9534f;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 3px;
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: rgba(0,0,0,.15);
         }
 
-            button.remove-btn:hover {
-                background-color: #c9302c;
-            }
-
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
+        .hover-row:hover {
+            background-color: rgba(255,255,255,0.04) !important;
         }
 
-        .action-btn {
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-size: 0.85em;
-            color: white;
+        .form-hint {
+            font-size: .8rem;
+            opacity: .8;
         }
 
-        .start-btn {
-            background-color: #5cb85c;
+        .card-header .btn-collapse {
+            border: 1px solid rgba(255,255,255,0.15);
         }
 
-            .start-btn:hover {
-                background-color: #4cae4c;
-            }
-
-        .stop-btn {
-            background-color: #d9534f;
+        .table-responsive {
+            max-height: 58vh;
         }
+    </style>
+}
 
-            .stop-btn:hover {
-                background-color: #c9302c;
-            }
-
-        .restart-btn {
-            background-color: #f0ad4e;
-        }
-
-            .restart-btn:hover {
-                background-color: #ec971f;
-            }
-
-        .restart-btn {
-            background-color: #f0ad4e;
-        }
-
-            .restart-btn:hover {
-                background-color: #ec971f;
-            }
-
-        .remove-btn {
-            background-color: #777;
-        }
-
-            .remove-btn:hover {
-                background-color: #555;
-            }
-
-        @@media (max-width: 768px) {
-            form #addForm
-
-        {
-            grid-template-columns: 1fr;
-        }
-
-        }</style>
-</head>
-<body>
-    <h1>🐕 Prot Watchdog - Web UI</h1>
-
-    <h2>Add New Process</h2>
-    <form id="addForm">
-        <label>
-            Name:
-            <input type="text" id="name" required placeholder="My App">
-        </label>
-        <label>
-            Executable Path:
-            <input type="text" id="exe" required placeholder="C:\path\to\app.exe">
-        </label>
-        <label>
-            Parameters:
-            <input type="text" id="params" placeholder="--flag value">
-        </label>
-        <label>
-            Restart Delay (seconds):
-            <input type="number" id="delay" value="5" min="1">
-        </label>
-        <label>
-            Max Restart Attempts:
-            <input type="number" id="maxRestarts" value="10" min="1" title="Maximum restarts within time window">
-        </label>
-        <label>
-            Time Window (minutes):
-            <input type="number" id="timeWindow" value="5" min="1" title="Time window for restart counting">
-        </label>
-
-        <hr style="grid-column: 1 / -1; margin: 10px 0;">
-        <h3 style="grid-column: 1 / -1; margin: 5px 0;">Health Monitoring (Optional)</h3>
-
-        <label>
-            <input type="checkbox" id="enableHealth"> Enable Health Check
-        </label>
-        <label>
-            Health Check Interval (s):
-            <input type="number" id="healthInterval" value="30" min="10">
-        </label>
-        <label>
-            Max Memory (MB, 0=disabled):
-            <input type="number" id="maxMemory" value="0" min="0" step="100">
-        </label>
-        <label>
-            Max CPU (%, 0=disabled):
-            <input type="number" id="maxCpu" value="0" min="0" max="100">
-        </label>
-        <label>
-            Min CPU (%, 0=disabled):
-            <input type="number" id="minCpu" value="0" min="0" max="100" title="Zombie detection">
-        </label>
-        <label>
-            Unhealthy Threshold (s):
-            <input type="number" id="unhealthyThreshold" value="60" min="10" title="How long unhealthy before restart">
-        </label>
-
-        <button type="submit">➕ Add Process</button>
-    </form>
-
-    <h2>Managed Processes (<span id="processCount">0</span>)</h2>
-    <div class="table-wrapper">
-        <table id="table">
-            <thead>
-                <tr>
-                    <th>Status</th>
-                    <th>Name</th>
-                    <th>PID</th>
-                    <th>Executable</th>
-                    <th>Parameters</th>
-                    <th>Restart Delay</th>
-                    <th>Last Start</th>
-                    <th>Restarts</th>
-                    <th>Recent Restarts</th>
-                    <th>Exit Code</th>
-                    <th>Auto-Restart</th>
-                    <th>Circuit Breaker</th>
-                    <th>Health</th>
-                    <th>CPU %</th>
-                    <th>Memory MB</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+<!-- KPIs -->
+<div class="row g-3">
+    <div class="col-12 col-lg-4">
+        <div class="card card-kpi">
+            <div class="card-body">
+                <div class="kpi-label text-secondary mb-1">Σύνολο διεργασιών</div>
+                <div class="kpi-value" id="processCount">—</div>
+            </div>
+        </div>
     </div>
+    <div class="col-12 col-lg-8">
+        <div class="card card-kpi h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <div class="text-secondary">Πίνακας ελέγχου διεργασιών</div>
+                <button id="btnRefresh" type="button" class="btn btn-outline-primary btn-sm" onclick="refresh()">
+                    <i class="bi bi-arrow-clockwise"></i> Ανανέωση
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Add / Edit Form (IDs όπως τα περιμένει το app.js) -->
+<div class="card mt-4">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-plus-square"></i>
+            <span class="fw-semibold">Καταχώριση νέας διεργασίας</span>
+        </div>
+        <button class="btn btn-sm btn-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#addFormWrap" aria-expanded="true">
+            <i class="bi bi-chevron-up"></i>
+        </button>
+    </div>
+    <div id="addFormWrap" class="collapse show">
+        <div class="card-body">
+            <form id="addForm" class="row g-3">
+                <div class="col-md-4">
+                    <label for="name" class="form-label">Όνομα *</label>
+                    <input id="name" type="text" class="form-control" placeholder="π.χ. SqlRelayServer" required>
+                </div>
+                <div class="col-md-5">
+                    <label for="exe" class="form-label">Executable Path *</label>
+                    <input id="exe" type="text" class="form-control mono" placeholder="C:\Apps\SqlRelay\SqlRelayServer.exe" required>
+                    <div class="form-text form-hint">Χρησιμοποίησε πλήρες path.</div>
+                </div>
+                <div class="col-md-3">
+                    <label for="params" class="form-label">Arguments</label>
+                    <input id="params" type="text" class="form-control mono" placeholder="--port 1515 --env Prod">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="delay" class="form-label">Restart Delay (sec)</label>
+                    <input id="delay" type="number" class="form-control" min="0" value="5">
+                </div>
+                <div class="col-md-3">
+                    <label for="maxRestarts" class="form-label">Max Restart Attempts</label>
+                    <input id="maxRestarts" type="number" class="form-control" min="0" value="10">
+                </div>
+                <div class="col-md-3">
+                    <label for="timeWindow" class="form-label">Restart Window (min)</label>
+                    <input id="timeWindow" type="number" class="form-control" min="1" value="5">
+                </div>
+
+                <div class="col-md-3 d-flex align-items-end">
+                    <div class="form-check">
+                        <input id="enableHealth" class="form-check-input" type="checkbox">
+                        <label class="form-check-label" for="enableHealth">Enable Health Check</label>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="healthInterval" class="form-label">Health Interval (sec)</label>
+                    <input id="healthInterval" type="number" class="form-control" min="5" value="30">
+                </div>
+                <div class="col-md-3">
+                    <label for="unhealthyThreshold" class="form-label">Unhealthy Threshold (sec)</label>
+                    <input id="unhealthyThreshold" type="number" class="form-control" min="10" value="60">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="maxMemory" class="form-label">Max RAM (MB)</label>
+                    <input id="maxMemory" type="number" step="0.1" class="form-control" value="0">
+                </div>
+                <div class="col-md-3">
+                    <label for="maxCpu" class="form-label">Max CPU (%)</label>
+                    <input id="maxCpu" type="number" step="0.1" class="form-control" value="0">
+                </div>
+                <div class="col-md-3">
+                    <label for="minCpu" class="form-label">Min CPU (%)</label>
+                    <input id="minCpu" type="number" step="0.1" class="form-control" value="0">
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Αποθήκευση
+                    </button>
+                    <button type="reset" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Καθαρισμός
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Πίνακας (IDs/στήλες όπως τα περιμένει το app.js) -->
+<div class="card mt-4">
+    <div class="card-header d-flex align-items-center gap-2">
+        <i class="bi bi-list-check"></i>
+        <span class="fw-semibold">Διεργασίες</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table id="table" class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Όνομα</th>
+                        <th>PID</th>
+                        <th>Path</th>
+                        <th>Args</th>
+                        <th>Delay</th>
+                        <th>Last Start</th>
+                        <th>Restarts</th>
+                        <th>Recent/Window</th>
+                        <th>ExitCode</th>
+                        <th>Auto</th>
+                        <th>Circuit</th>
+                        <th>Health</th>
+                        <th class="text-end">CPU %</th>
+                        <th class="text-end">RAM MB</th>
+                        <th>Ενέργειες</th>
+                    </tr>
+                </thead>
+                <tbody></tbody> <!-- Το app.js γεμίζει εδώ -->
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Μικρό UX: εναλλαγή εικονιδίου στο κουμπί collapse
+        document.addEventListener('shown.bs.collapse', e => {
+            if (e.target.id === 'addFormWrap') e.target.previousElementSibling.querySelector('i').className = 'bi bi-chevron-up';
+        });
+        document.addEventListener('hidden.bs.collapse', e => {
+            if (e.target.id === 'addFormWrap') e.target.previousElementSibling.querySelector('i').className = 'bi bi-chevron-down';
+        });
+    </script>
+
+    <!-- Το app.js σου -->
     <script src="/app.js"></script>
-</body>
-</html>
+}

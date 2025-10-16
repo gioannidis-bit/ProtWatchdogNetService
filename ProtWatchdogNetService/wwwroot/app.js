@@ -2,11 +2,11 @@ async function refresh() {
     try {
         const res = await fetch('/api/processes');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
+        
         const arr = await res.json();
         const tbody = document.querySelector('#table tbody');
         tbody.innerHTML = '';
-
+        
         document.getElementById('processCount').textContent = arr.length;
 
         if (arr.length === 0) {
@@ -16,7 +16,7 @@ async function refresh() {
 
         for (const p of arr) {
             const tr = document.createElement('tr');
-
+            
             const statusText = p.isRunning ? '✅ Running' : '❌ Stopped';
             const statusClass = p.isRunning ? 'status-running' : 'status-stopped';
             const pid = p.currentPid ? p.currentPid : '-';
@@ -24,26 +24,26 @@ async function refresh() {
             const exitCode = p.lastExitCode !== null ? p.lastExitCode : '-';
             const params = p.parameters || '-';
             const autoRestart = p.autoRestart ? '✅ Yes' : '❌ No';
-
+            
             // Circuit breaker status
-            const circuitStatus = p.circuitBreakerTripped
-                ? '🔴 TRIPPED'
+            const circuitStatus = p.circuitBreakerTripped 
+                ? '🔴 TRIPPED' 
                 : (p.recentRestartCount >= p.maxRestartAttempts * 0.7 ? '🟡 Warning' : '🟢 OK');
             const circuitClass = p.circuitBreakerTripped ? 'status-stopped' : '';
-
+            
             // Recent restarts with limit
             const recentRestarts = `${p.recentRestartCount}/${p.maxRestartAttempts} (${p.restartTimeWindowMinutes}m)`;
-
+            
             // Health status
-            const healthIcon = p.enableHealthCheck
+            const healthIcon = p.enableHealthCheck 
                 ? (p.isHealthy ? '💚' : '❤️')
                 : '⚪';
-            const healthText = p.enableHealthCheck
-                ? (p.healthStatus || '-')
+            const healthText = p.enableHealthCheck 
+                ? (p.healthStatus || '-') 
                 : 'Disabled';
             const cpuText = p.enableHealthCheck ? p.lastCpuPercent.toFixed(1) : '-';
             const memText = p.enableHealthCheck ? p.lastMemoryMB.toFixed(1) : '-';
-
+            
             // Action buttons based on state
             let actionButtons = '';
             if (p.isRunning) {
@@ -56,7 +56,7 @@ async function refresh() {
                 `;
             }
             actionButtons += `<button data-id='${p.id}' class='action-btn remove-btn'>🗑️ Remove</button>`;
-
+            
             tr.innerHTML = `
                 <td class="${statusClass}">${statusText}</td>
                 <td><strong>${escapeHtml(p.name)}</strong></td>
@@ -82,7 +82,7 @@ async function refresh() {
         attachActionHandlers();
     } catch (err) {
         console.error('Refresh failed:', err);
-        document.querySelector('#table tbody').innerHTML =
+        document.querySelector('#table tbody').innerHTML = 
             `<tr><td colspan="16" style="text-align:center; color:red;">Error loading processes: ${err.message}</td></tr>`;
     }
 }
@@ -98,7 +98,7 @@ function attachActionHandlers() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: id })
                 });
-
+                
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 await refresh();
             } catch (err) {
@@ -117,7 +117,7 @@ function attachActionHandlers() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: id })
                 });
-
+                
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 await refresh();
             } catch (err) {
@@ -131,7 +131,7 @@ function attachActionHandlers() {
         btn.addEventListener('click', async (e) => {
             const id = e.target.getAttribute('data-id');
             const name = e.target.closest('tr').querySelector('strong').textContent;
-
+            
             if (!confirm(`Remove process "${name}"? This will kill the process if running.`)) {
                 return;
             }
@@ -142,7 +142,7 @@ function attachActionHandlers() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: id })
                 });
-
+                
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 await refresh();
             } catch (err) {
@@ -160,7 +160,7 @@ function escapeHtml(text) {
 
 document.getElementById('addForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-
+    
     const dto = {
         name: document.getElementById('name').value.trim(),
         executablePath: document.getElementById('exe').value.trim(),
@@ -187,7 +187,7 @@ document.getElementById('addForm').addEventListener('submit', async (e) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dto)
         });
-
+        
         if (!res.ok) {
             const text = await res.text();
             throw new Error(`HTTP ${res.status}: ${text}`);
